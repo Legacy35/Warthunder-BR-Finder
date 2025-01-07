@@ -1,6 +1,13 @@
+import threading
+
+from js2py.base import false
+
 import ScreenReader
 import keyboard
-# Example usage
+import time
+from collections import deque
+
+import UI
 
 def analyze_br():
     ScreenReader.capture_application_screenshot("War Thunder", "war_thunder_screenshot.png")
@@ -37,19 +44,43 @@ def analyze_br():
             print(f"The plane: '{plane}' is not Cataloged")
         else:
             br= max(br,dict[plane])
-    if br !=0.0:
-        print(f"The BR for this lobby is {max(br-1,1.0)} - {br}")
+    return br
 
-# Check if TAB is pressed
-while True:
+def detect_if_in_game ():
+    ScreenReader.capture_application_screenshot("War Thunder", "war_thunder_screenshot.png")
+    return ScreenReader.is_matching_progress_bar("war_thunder_screenshot.png", "war_thunder_game_bar.png", (1490,135,840,70), .65)
+
+
+def main():
+    while UI.is_done:
+        time.sleep(1)
+        print("Debug: Waiting For UI To Finish")
+    cur_game_br = 0.0
+    boolean_list = deque(maxlen=7)
+    UI.update_text("...")
     # Check if TAB is pressed
-    if keyboard.is_pressed('tab'):
-        if keyboard.is_pressed('f8'):
-            analyze_br()
-            while keyboard.is_pressed('tab'):
-                continue
+    while True:
+        # Check if TAB is pressed
 
-    # Check if ALT+F8 is pressed
-    if keyboard.is_pressed('alt+f8'):
-        print("ALT+F8 pressed. Exiting...")
-        break
+        boolean_list.appendleft(detect_if_in_game())
+        print(f"Debug Info: \tIn a Match: {any(boolean_list)}\t Cur BR: {cur_game_br}")
+
+        if cur_game_br == 0.0 and any(boolean_list):
+            UI.update_text("Press Tab")
+            if keyboard.is_pressed('tab'):
+                UI.update_text("Processing...")
+                cur_game_br= analyze_br()
+                UI.update_text(f"BR {max(cur_game_br - 1, 1.0)} - {cur_game_br}")
+
+        elif cur_game_br != 0.0 and not any(boolean_list):
+            UI.update_text("")
+            cur_game_br=0.0
+            time.sleep(10)
+
+        elif cur_game_br ==0.0 and not any(boolean_list):
+            time.sleep(5)
+
+
+thread = threading.Thread(target=main)
+thread.start()
+UI.create_window()

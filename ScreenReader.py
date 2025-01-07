@@ -21,7 +21,6 @@ def capture_application_screenshot(app_name, output_file):
 
         # Save the screenshot
         screenshot.save(output_file)
-        print(f"Screenshot saved as {output_file}")
 
     except Exception as e:
         print(f"Error: {e}")
@@ -56,3 +55,25 @@ def get_list_of_friendly_planes_from_screenshot(image_path,roi):
         return []
 
 
+import cv2
+
+def is_matching_progress_bar(base_image_path, template_image_path, roi, threshold=0.8):
+    # Open the image
+    img = Image.open(base_image_path)
+    # Crop the image to the ROI if provided
+    if roi:
+        x, y, width, height = roi
+        img = img.crop((x, y, x + width, y + height))
+
+    # Convert the cropped image to a format EasyOCR can process
+    img.save("temp_image_for_ocr_bar.png")  # Save temporarily for EasyOCR processing
+    # Load the base image and template
+    base_image = cv2.imread(base_image_path, cv2.IMREAD_GRAYSCALE)
+    template = cv2.imread(template_image_path, cv2.IMREAD_GRAYSCALE)
+
+    # Perform template matching
+    result = cv2.matchTemplate(base_image, template, cv2.TM_CCOEFF_NORMED)
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+
+    # Check if the match is above the threshold
+    return max_val >= threshold
