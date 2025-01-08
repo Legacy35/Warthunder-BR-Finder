@@ -36,7 +36,50 @@ def analyze_br():
         "Kfir C10": 13.0,
         "Kfir C1o": 13.0,
         "F-15]": 13.0,
-        "F-15J": 13.0
+        "F-15J": 13.0,
+        "A-1OA Late": 10.7,
+        "A-10A Late": 10.7,
+        "A-1OC": 11.7,
+        "A-10C": 11.7,
+        "A-1OA": 10.3,
+        "A-10A":10.3,
+        "J-7E": 11.3,
+        "J-7D": 10.7,
+        "JF-17":13.3,
+        "J-8F": 13.0,
+        "F-5E": 11.0,
+        "F-SE": 11.0,
+        "F-SC": 10.7,
+        "F-5C": 10.7,
+        "F-5A": 10.7,
+        "F-SA": 10.7,
+        "F-105D": 10.3,
+        "A-7D": 10.3,
+        "A-7E":10.7,
+        "F-8E":10.7,
+        "AJS37": 11.0,
+        "Mig-21bis": 11.0,
+        "OMig-21bis":11.0,
+        "F-111A": 10.7,
+        "F-111F": 11.7,
+        "AV-8C": 9.7,
+        "#F-104G":11.0,
+        "MiG-21bis-SAU" :11.0,
+        "Su-25K": 10.3,
+        "Su-25": 10.3,
+        "Su-25BM": 11.3,
+        "Su-25T": 11.7,
+        "FSU-2":10.3,
+        "FBU-2": 10.3,
+        "F-4C Phantom":10.3,
+        "F-4C Phantom II":10.3,
+        "F-4C Phantom Il":10.3,
+        "F-4C Phantom ll": 10.3,
+        "MiG-21MF": 10.7,
+        "ZMiG-21MF":10.7,
+        "Mig-21 \"Lazur-":11.0,
+        "Mig-21 \"Lazur-.":11.0,
+        "F-15E": 14.0,
     }
     br = 0.0
     for plane in list:
@@ -70,7 +113,10 @@ def main():
             if keyboard.is_pressed('tab'):
                 UI.update_text("Processing...")
                 cur_game_br= analyze_br()
-                UI.update_text(f"BR {max(cur_game_br - 1, 1.0)} - {cur_game_br}")
+                if cur_game_br ==0.0:
+                    UI.update_text("Failed to Identify BR")
+                else:
+                    UI.update_text(f"BR {max(cur_game_br - 1, 1.0)} - {cur_game_br}")
 
         elif cur_game_br != 0.0 and not any(boolean_list):
             UI.update_text("")
@@ -78,8 +124,9 @@ def main():
             time.sleep(10)
 
         elif cur_game_br ==0.0 and not any(boolean_list):
+            UI.update_text("")
             time.sleep(5)
-
+#'JA3ZC', 'OF-104G', 'AJS37', 'A-1OA Late', 'J-7D', 'F-SE', 'F-SC', 'F-SC', 'Mig-21bis', 'A-10A', 'A-10A', 'F-SC', 'Buccaneer S.2B', 'F-SC', 'A-10A Late', 'A-10A'
 
 thread = threading.Thread(target=main)
 thread.start()

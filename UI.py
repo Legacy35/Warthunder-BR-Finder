@@ -55,7 +55,7 @@ def create_window():
     root.protocol("WM_DELETE_WINDOW", on_window_close)
 
     # Add a label
-    label = tk.Label(root, text="Initializing...", font=("Arial", 14), bg="white", fg="black")
+    label = tk.Label(root, text="...", font=("Arial", 14), bg="white", fg="black")
     label.pack(pady=20)
 
     # Add a toggle button
